@@ -1,6 +1,9 @@
 package com.application.demo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 public class AppUser {
@@ -9,9 +12,21 @@ public class AppUser {
     private Long id;
     
     private String name;
-    private String email;
+
+    @NotEmpty(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
+
+    @NotEmpty(message = "Email is required")
+    @Email(message = "Email is not valid")
+    private String email;
+
+    private boolean verified;
+    
     private String confirmationCode;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     public Long getId(){
         return this.id;
@@ -51,6 +66,22 @@ public class AppUser {
 
     public void setConfirmationCode(String confirmationCode){
         this.confirmationCode = confirmationCode;
+    }
+
+    public String getImage(){
+        return this.imageUrl;
+    }
+
+    public void setImage(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+
+    public Boolean getVerified(){
+        return this.verified;
+    }
+
+    public void setVerified(Boolean verified){
+        this.verified = verified;
     }
 }
 

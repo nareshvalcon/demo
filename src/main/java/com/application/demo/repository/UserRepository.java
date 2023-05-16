@@ -5,5 +5,6 @@ import com.application.demo.entity.*;
 
 public interface UserRepository extends JpaRepository<AppUser, Long> {
     AppUser findByConfirmationCode(String confirmationCode);
+    AppUser findByEmail(String email);
 }
 
