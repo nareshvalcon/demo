@@ -2,6 +2,7 @@ package com.application.demo.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,12 @@ public class UserController {
     public ResponseEntity<?> uploadUserImage(@RequestParam("email") String email, @RequestParam("image") MultipartFile image) {
         String imageUrl = userService.uploadImage(email, image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
+    }
+
+    @GetMapping("/getUser/{email}")
+    public ResponseEntity<AppUser> getUserByEmail(@PathVariable String email) {
+        AppUser user = userService.getUserByEmail(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

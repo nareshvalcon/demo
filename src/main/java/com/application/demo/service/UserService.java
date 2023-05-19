@@ -77,5 +77,9 @@ public class UserService {
         // Generate a unique blob name using the email and original filename
         return email + "/" + UUID.randomUUID() + "_" + originalFilename;
     }
+
+    public AppUser getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
 
