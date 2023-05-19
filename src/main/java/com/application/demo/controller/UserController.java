@@ -1,5 +1,7 @@
 package com.application.demo.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.demo.entity.AppUser;
+import com.application.demo.entity.Education;
+import com.application.demo.service.EducationService;
 import com.application.demo.service.UserService;
 
 @RestController
@@ -16,6 +20,9 @@ import com.application.demo.service.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EducationService educationService;
 
     @PostMapping("/register")
     public ResponseEntity<AppUser> registerUser(@Valid @RequestBody AppUser user) {
@@ -33,10 +40,32 @@ public class UserController {
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
     }
 
-    @GetMapping("/getUser/{email}")
-    public ResponseEntity<AppUser> getUserByEmail(@PathVariable String email) {
+    @GetMapping("/getUser")
+    public ResponseEntity<AppUser> getUserByEmail(@RequestParam("email") String email) {
         AppUser user = userService.getUserByEmail(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/education")
+    public ResponseEntity<?> addEducation(@RequestParam("email") String email, @RequestBody Education education) {
+        AppUser user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        education.setUser(user);
+        Education savedEducation = educationService.saveEducation(education);
+        
+        return ResponseEntity.ok(savedEducation);
+    }
+
+    @GetMapping(path = "/education")
+    public List<Education> getEducationByEmail(@RequestParam("email") String email) {
+        AppUser user = userService.getUserByEmail(email);
+        if (user == null) {
+            return null;
+        }
+        return educationService.getEducationByEmail(user.getEmail());
     }
 
 }
