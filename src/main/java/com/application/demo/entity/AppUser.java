@@ -35,6 +35,9 @@ public class AppUser implements Serializable{
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<Education> educationList;
 
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    private List<Experience> experienceList;
+
     public Long getId(){
         return this.id;
     }

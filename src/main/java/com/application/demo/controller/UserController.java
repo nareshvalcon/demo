@@ -1,5 +1,6 @@
 package com.application.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,7 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.application.demo.entity.AppUser;
 import com.application.demo.entity.Education;
+import com.application.demo.entity.Experience;
 import com.application.demo.service.EducationService;
+import com.application.demo.service.ExperienceService;
 import com.application.demo.service.UserService;
 
 @RestController
@@ -23,6 +26,10 @@ public class UserController {
 
     @Autowired
     private EducationService educationService;
+
+    @Autowired
+    private ExperienceService experienceService;
+
 
     @PostMapping("/register")
     public ResponseEntity<AppUser> registerUser(@Valid @RequestBody AppUser user) {
@@ -63,9 +70,29 @@ public class UserController {
     public List<Education> getEducationByEmail(@RequestParam("email") String email) {
         AppUser user = userService.getUserByEmail(email);
         if (user == null) {
-            return null;
+            return new ArrayList<Education>();
         }
         return educationService.getEducationByEmail(user.getEmail());
+    }
+
+    @PostMapping("/experience")
+    public ResponseEntity<?> addExperience(@RequestParam("email") String email, @RequestBody Experience experience) {
+        AppUser user = userService.getUserByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        experience.setUser(user);
+        Experience savedExperience = experienceService.saveExperience(experience);
+        return ResponseEntity.ok(savedExperience);
+    }
+
+    @GetMapping("/experience")
+    public List<Experience> getExperienceByUserEmail(@RequestParam String email) {
+        AppUser user = userService.getUserByEmail(email);
+        if (user == null) {
+            return new ArrayList<Experience>();
+        }
+        return experienceService.getExperienceByEmail(email);
     }
 
 }

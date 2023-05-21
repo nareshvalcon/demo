@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.application.demo.entity.AppUser;
 import com.application.demo.entity.Education;
 import com.application.demo.repository.EducationRepository;
 

@@ -1,30 +1,23 @@
 package com.application.demo.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.application.demo.validator.EducationDateValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@EducationDateValidator
-public class Education implements Serializable{
+public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String universityName;
-    private String degree;
+    private String companyName;
+    private String role;
     private int startYear;
     private int endYear; //optional
+    private String description;
 
     @Column(name = "email")
     private String email;
@@ -33,29 +26,21 @@ public class Education implements Serializable{
     @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
     private AppUser appUser;
 
-    //getters and setters
-    public void setUniversityName(String universityName){
-        this.universityName = universityName;
+    // getters and setters
+    public void setCompanyName(String companyName){
+        this.companyName = companyName;
     }
 
-    public String getUniversityName(){
-        return this.universityName;
+    public String getCompanyName(){
+        return this.companyName;
     }
 
-    public void setDegree(String degree){
-        this.degree = degree;
+    public void setRole(String role){
+        this.role = role;
     }
 
-    public String getEmail(){
-        return this.email;
-    }
-
-    public void setEmail(String email){
-        this.email = email;
-    }
-
-    public String getDegree(){
-        return this.degree;
+    public String getRole(){
+        return this.role;
     }
 
     public int getStartYear(){
@@ -74,6 +59,22 @@ public class Education implements Serializable{
         return this.endYear;
     }
 
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+    public String getEmail(){
+        return this.email;
+    }
+
+    public void setDescription(String description){
+        this.description = description;
+    }
+
+    public String getDescription(){
+        return this.description;
+    }
+
     public void setUser(AppUser user){
         this.appUser = user;
     }
@@ -83,3 +84,4 @@ public class Education implements Serializable{
         return this.appUser;
     }
 }
+
