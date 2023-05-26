@@ -3,6 +3,7 @@ package com.application.demo.entity;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 import com.application.demo.validator.EducationDateValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,17 +11,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class Experience {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotEmpty(message = "Company name is required")
     private String companyName;
     private String role;
+
+    @NotEmpty(message = "Start Year is required")
     private int startYear;
     private int endYear; //optional
     private String description;
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
@@ -65,6 +72,14 @@ public class Experience {
 
     public String getEmail(){
         return this.email;
+    }
+
+    public String getImage(){
+        return this.imageUrl;
+    }
+
+    public void setImage(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 
     public void setDescription(String description){

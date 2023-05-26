@@ -15,7 +15,13 @@ public class AppUser implements Serializable{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    private String name;
+    @NotEmpty(message = "First Name is required")
+    private String firstName;
+
+    private String middleName;
+
+    @NotEmpty(message = "Last Name is required")
+    private String lastName;
 
     @NotEmpty(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
@@ -46,12 +52,28 @@ public class AppUser implements Serializable{
         this.id = id;
     }
 
-    public String getName(){
-        return this.name;
+    public String getFirstName(){
+        return this.firstName;
     }
 
-    public void setName(String name){
-        this.name = name;
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
+    public String getLastName(){
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+    }
+
+    public String getMiddleName(){
+        return this.middleName;
+    }
+
+    public void setMiddleName(String middleName){
+        this.middleName = middleName;
     }
 
     public String getEmail(){
