@@ -42,8 +42,8 @@ public class UserController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadUserImage(@RequestParam("email") String email, @RequestParam("image") MultipartFile image) {
-        String imageUrl = userService.uploadImage(email, image);
+    public ResponseEntity<?> uploadUserImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
+        String imageUrl = userService.uploadImage(id, image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
         if (user == null) {
             return new ArrayList<Education>();
         }
-        return educationService.getEducationByEmail(user.getEmail());
+        return educationService.getEducationByUserId(user.getId());
     }
 
     @PostMapping("/experience")
@@ -92,7 +92,7 @@ public class UserController {
         if (user == null) {
             return new ArrayList<Experience>();
         }
-        return experienceService.getExperienceByEmail(email);
+        return experienceService.getExperienceByUserId(user.getId());
     }
 
 }
