@@ -2,6 +2,7 @@ package com.application.demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -33,66 +34,53 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<AppUser> registerUser(@Valid @RequestBody AppUser user) {
-        return ResponseEntity.ok(userService.registerUser(user));
+        try{
+            return ResponseEntity.ok(userService.registerUser(user));
+        }
+        catch(RuntimeException re){
+            return new ResponseEntity(re.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AppUser> loginUser(@RequestParam("email") String email, @RequestParam("password") String password) {
+        AppUser loggedInUser = userService.loginUser(email, password);
+        return ResponseEntity.ok(loggedInUser);
     }
 
     @GetMapping("/confirm")
-    public ResponseEntity<AppUser> confirmUser(@RequestParam("code") String confirmationCode) {
-        return ResponseEntity.ok(userService.confirmUser(confirmationCode));
+    public ResponseEntity<AppUser> confirmUser(@RequestParam("email") String email, @RequestParam("code") String confirmationCode) {
+        return ResponseEntity.ok(userService.confirmUser(email, confirmationCode));
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadUserImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
-        String imageUrl = userService.uploadImage(id, image);
+    public ResponseEntity<?> uploadUserImage(@RequestParam("id") String id, @RequestParam("image") MultipartFile image) {
+        String imageUrl = userService.uploadImage(Long.valueOf(id), image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
     }
 
     @GetMapping("/getUser")
     public ResponseEntity<AppUser> getUserByEmail(@RequestParam("email") String email) {
-        AppUser user = userService.getUserByEmail(email);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PostMapping("/education")
-    public ResponseEntity<?> addEducation(@RequestParam("email") String email, @RequestBody Education education) {
-        AppUser user = userService.getUserByEmail(email);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-
-        education.setUser(user);
-        Education savedEducation = educationService.saveEducation(education);
-        
-        return ResponseEntity.ok(savedEducation);
+        Optional<AppUser> user = userService.getUserByEmail(email);
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/education")
-    public List<Education> getEducationByEmail(@RequestParam("email") String email) {
-        AppUser user = userService.getUserByEmail(email);
-        if (user == null) {
+    public List<Education> getEducationByEmail(@RequestParam("id") Long id) {
+        Optional<AppUser> user = userService.getUserById(id);
+        if(!user.isPresent()){
             return new ArrayList<Education>();
         }
-        return educationService.getEducationByUserId(user.getId());
-    }
-
-    @PostMapping("/experience")
-    public ResponseEntity<?> addExperience(@RequestParam("email") String email, @RequestBody Experience experience) {
-        AppUser user = userService.getUserByEmail(email);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        experience.setUser(user);
-        Experience savedExperience = experienceService.saveExperience(experience);
-        return ResponseEntity.ok(savedExperience);
+        return educationService.getEducationByUserId(user.get().getId());
     }
 
     @GetMapping("/experience")
-    public List<Experience> getExperienceByUserEmail(@RequestParam String email) {
-        AppUser user = userService.getUserByEmail(email);
-        if (user == null) {
+    public List<Experience> getExperienceByUserId(@RequestParam("id") Long id) {
+        Optional<AppUser> user = userService.getUserById(id);
+        if(!user.isPresent()){
             return new ArrayList<Experience>();
         }
-        return experienceService.getExperienceByUserId(user.getId());
+        return experienceService.getExperienceByUserId(user.get().getId());
     }
 
 }

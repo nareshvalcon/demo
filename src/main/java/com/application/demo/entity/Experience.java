@@ -1,11 +1,9 @@
 package com.application.demo.entity;
 
-import java.util.Date;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-import com.application.demo.validator.EducationDateValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -18,19 +16,19 @@ public class Experience {
     private String companyName;
     private String role;
 
-    @NotEmpty(message = "Start Year is required")
+    @NotNull(message = "Start Year is required")
     private int startYear;
     private int endYear; //optional
     private String description;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "userId")
+    private Long userId;
 
     @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
+    @JoinColumn(name = "userId", referencedColumnName = "id", insertable = false, updatable = false)
     private AppUser appUser;
 
     // getters and setters
@@ -66,12 +64,20 @@ public class Experience {
         return this.endYear;
     }
 
-    public void setEmail(String email){
-        this.email = email;
+    // public void setEmail(String email){
+    //     this.email = email;
+    // }
+
+    // public String getEmail(){
+    //     return this.email;
+    // }
+
+    public void setUserId(Long userId){
+        this.userId = userId;
     }
 
-    public String getEmail(){
-        return this.email;
+    public Long getUserId(){
+        return this.userId;
     }
 
     public String getImage(){

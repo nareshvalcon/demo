@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.application.demo.validator.EducationDateValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,18 +32,21 @@ public class Education implements Serializable{
     @NotEmpty(message = "Course is required")
     private String course;
 
-    @NotEmpty(message = "Start year is required")
+    @NotNull(message = "Start year is required")
     private int startYear;
     private int endYear; //optional
 
-    @Column(name = "email")
-    private String email;
+    // @Column(name = "email")
+    // private String email;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private AppUser appUser;
 
     //getters and setters
@@ -70,12 +74,20 @@ public class Education implements Serializable{
         return this.course;
     }
 
-    public String getEmail(){
-        return this.email;
+    // public String getEmail(){
+    //     return this.email;
+    // }
+
+    // public void setEmail(String email){
+    //     this.email = email;
+    // }
+
+    public void setUserId(Long userId){
+        this.userId = userId;
     }
 
-    public void setEmail(String email){
-        this.email = email;
+    public Long getUserId(){
+        return this.userId;
     }
 
     public String getImage(){

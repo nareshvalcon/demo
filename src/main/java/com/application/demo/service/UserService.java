@@ -2,6 +2,7 @@ package com.application.demo.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ public class UserService {
     // private EmailService emailService;
 
     public AppUser registerUser(AppUser user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists.");
+        }
         user.setPassword(user.getPassword());
         // Generate confirmation code
         String code = String.format("%04d", new Random().nextInt(10000));
@@ -43,24 +47,44 @@ public class UserService {
         return user;
     }
 
-    public AppUser confirmUser(String confirmationCode) {
-        AppUser user = userRepository.findByConfirmationCode(confirmationCode);
-        if (user != null) {
-            user.setVerified(true);
-            userRepository.save(user);
+    public AppUser loginUser(String email, String password) {
+        Optional<AppUser> user = userRepository.findByEmail(email);
+        
+        if (!user.isPresent()) {
+            // throw exception or return error
+            return null;
         }
-        return user;
+    
+        if (!password.equals(user.get().getPassword())) {
+            // throw exception or return error
+            return null;
+        }
+    
+        return user.get();
     }
 
-    public String uploadImage(String email, MultipartFile imageFile) {
-        String blobName = generateBlobName(email, imageFile.getOriginalFilename());
+    public AppUser confirmUser(String email, String confirmationCode) {
+        Optional<AppUser> user = userRepository.findByEmail(email);
+        if (user.isPresent() && user.get().getConfirmationCode().equals(confirmationCode)) {
+            user.get().setVerified(true);
+            userRepository.save(user.get());
+        }
+        return user.get();
+    }
+
+    public String uploadImage(Long id, MultipartFile imageFile) {
+        String blobName = generateBlobName(id, imageFile.getOriginalFilename());
         String imageUrl;
         try (InputStream data = imageFile.getInputStream()) {
             imageUrl = azureStorageService.upload(blobName, data, imageFile.getSize());
-            AppUser user = userRepository.findByEmail(email);
-            if(user != null){
+            Optional<AppUser> optionalUser = userRepository.findById(id);
+            if (optionalUser.isPresent()) {
+                AppUser user = optionalUser.get();
                 user.setImage(imageUrl);
                 userRepository.save(user);
+            } else {
+                // User with the provided ID does not exist
+                throw new IOException("User with provided Id does not exist");
             }
         }
         catch(IOException ioe){
@@ -73,13 +97,17 @@ public class UserService {
         return imageUrl;
     }
 
-    private String generateBlobName(String email, String originalFilename) {
+    private String generateBlobName(Long id, String originalFilename) {
         // Generate a unique blob name using the email and original filename
-        return email + "/" + UUID.randomUUID() + "_" + originalFilename;
+        return id + "/" + UUID.randomUUID() + "_" + originalFilename;
     }
 
-    public AppUser getUserByEmail(String email) {
+    public Optional<AppUser> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public Optional<AppUser> getUserById(Long id) {
+        return userRepository.findById(id);
     }
 }
 

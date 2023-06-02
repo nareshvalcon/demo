@@ -8,5 +8,5 @@ import com.application.demo.entity.Experience;
 
 // ExperienceRepository
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
-    List<Experience> findByEmail(String email);
+    List<Experience> findByUserId(Long id);
 }

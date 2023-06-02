@@ -9,6 +9,6 @@ import com.application.demo.entity.Education;
 
 @Repository
 public interface EducationRepository extends JpaRepository<Education, Long> {
-    List<Education> findByEmail(String email);
+    List<Education> findByUserId(Long id);
 }
 
