@@ -44,12 +44,12 @@ public class EducationController {
     }
 
     @GetMapping(path = "/get")
-    public List<Education> getEducationById(@RequestParam("id") Long id) {
-        Optional<AppUser> user = userService.getUserById(id);
-        if(!user.isPresent()){
-            return new ArrayList<Education>();
+    public Education getEducationById(@RequestParam("id") Long id) {
+        Optional<Education> education = educationService.getEducationById(id);
+        if(!education.isPresent()){
+            return null;
         }
-        return educationService.getEducationByUserId(user.get().getId());
+        return education.get();
     }
 
     @PostMapping("/upload")

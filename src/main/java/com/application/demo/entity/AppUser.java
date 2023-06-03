@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @Entity
 public class AppUser implements Serializable{
 
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(unique = true)
     private Long id;
@@ -27,7 +28,6 @@ public class AppUser implements Serializable{
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    @Id
     @NotEmpty(message = "Email is required")
     @Email(message = "Email is not valid")
     @Column(unique = true)

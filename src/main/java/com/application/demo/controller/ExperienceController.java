@@ -42,12 +42,12 @@ public class ExperienceController {
     }
 
     @GetMapping("/get")
-    public List<Experience> getExperienceByUserId(@RequestParam("id") Long id) {
-        Optional<AppUser> user = userService.getUserById(id);
-        if(!user.isPresent()){
-            return new ArrayList<Experience>();
+    public Experience getExperienceByUserId(@RequestParam("id") Long id) {
+        Optional<Experience> experience = experienceService.getExperienceById(id);
+        if(!experience.isPresent()){
+            return null;
         }
-        return experienceService.getExperienceByUserId(user.get().getId());
+        return experience.get();
     }
 
     @PostMapping("/upload")
