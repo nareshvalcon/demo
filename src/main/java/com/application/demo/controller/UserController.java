@@ -43,9 +43,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AppUser> loginUser(@RequestParam("email") String email, @RequestParam("password") String password) {
-        AppUser loggedInUser = userService.loginUser(email, password);
-        return ResponseEntity.ok(loggedInUser);
+    public ResponseEntity<?> loginUser(@RequestParam("email") String email, @RequestParam("password") String password) {
+        Optional<AppUser> loggedInUser = userService.loginUser(email, password);
+        if(loggedInUser.isPresent()){
+            return ResponseEntity.ok(loggedInUser.get());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
     }
 
     @GetMapping("/confirm")
@@ -83,4 +86,12 @@ public class UserController {
         return experienceService.getExperienceByUserId(user.get().getId());
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestParam Long id, @RequestBody AppUser userUpdates) {
+        AppUser updatedUser = userService.updateUser(id, userUpdates);
+        if(updatedUser != null){
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not exist or Invalid ID"); 
+    }
 }

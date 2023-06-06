@@ -1,7 +1,5 @@
 package com.application.demo.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,5 +55,15 @@ public class EducationController {
     public ResponseEntity<?> uploadUserImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
         String imageUrl = educationService.uploadImage(id, image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateEducation(@RequestParam Long id, @RequestBody Education educationUpdates) {
+        Education updatedEducation = educationService.updateEducation(id, educationUpdates);
+        if(updatedEducation != null){
+            return new ResponseEntity<>(updatedEducation, HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Education does not exist or Invalid ID");
+    
     }
 }

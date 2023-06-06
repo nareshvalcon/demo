@@ -1,12 +1,15 @@
 package com.application.demo.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class AppUser implements Serializable{
@@ -41,10 +44,26 @@ public class AppUser implements Serializable{
     private String imageUrl;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Education> educationList;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Experience> experienceList;
+
+    // @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL)
+    // private List<Connection> connectionsInitiated;
+
+    // @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL)
+    // private List<Connection> connectionsReceived;
+
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Connection> connectionsInitiated = new ArrayList<Connection>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Connection> connectionsReceived = new ArrayList<Connection>();
 
     public Long getId(){
         return this.id;
@@ -117,5 +136,38 @@ public class AppUser implements Serializable{
     public void setVerified(Boolean verified){
         this.verified = verified;
     }
+
+    public List<Education> getEducationList() {
+        return educationList;
+    }
+
+    public void setEducationList(List<Education> educationList) {
+        this.educationList = educationList;
+    }
+
+    public List<Experience> getExperienceList() {
+        return experienceList;
+    }
+
+    public void setExperienceList(List<Experience> experienceList) {
+        this.experienceList = experienceList;
+    }
+
+    public List<Connection> getConnectionsInitiated() {
+        return connectionsInitiated;
+    }
+
+    public void setConnectionsInitiated(List<Connection> connectionsInitiated) {
+        this.connectionsInitiated = connectionsInitiated;
+    }
+
+    public List<Connection> getConnectionsReceived() {
+        return connectionsReceived;
+    }
+
+    public void setConnectionsReceived(List<Connection> connectionsReceived) {
+        this.connectionsReceived = connectionsReceived;
+    }
+    
 }
 

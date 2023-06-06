@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,5 +55,14 @@ public class ExperienceController {
     public ResponseEntity<?> uploadUserImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
         String imageUrl = experienceService.uploadImage(id, image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateExperience(@RequestParam Long id, @RequestBody Experience experienceUpdates) {
+        Experience updatedExperience = experienceService.updateExperience(id, experienceUpdates);
+        if(updatedExperience != null){
+            return new ResponseEntity<>(updatedExperience, HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Experience does not exist or Invalid ID");
     }
 }

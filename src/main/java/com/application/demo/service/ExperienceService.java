@@ -44,9 +44,20 @@ public class ExperienceService {
         experienceRepository.deleteById(id);
     }
 
-    // public List<Experience> getExperienceByEmail(String email) {
-    //     return experienceRepository.findByEmail(email);
-    // }
+    public Experience updateExperience(Long id, Experience experienceUpdates) {
+        Optional<Experience> experience = experienceRepository.findById(id);
+        if(experience.isPresent()){
+            Experience experienceOld = experience.get();
+            experienceOld.setCompanyName(experienceUpdates.getCompanyName() != null ? experienceUpdates.getCompanyName() : experienceOld.getCompanyName());
+            experienceOld.setRole(experienceUpdates.getRole() != null ? experienceUpdates.getRole() : experienceOld.getRole());
+            experienceOld.setDescription(experienceUpdates.getDescription() != null ? experienceUpdates.getDescription() : experienceOld.getDescription());
+            experienceOld.setStartYear(experienceUpdates.getStartYear() != 0 ? experienceUpdates.getStartYear() : experienceOld.getStartYear());
+            experienceOld.setEndYear(experienceUpdates.getEndYear() != 0 ? experienceUpdates.getEndYear() : experienceOld.getEndYear());
+            return experienceRepository.save(experienceOld);
+        }
+        return null;
+                    
+    }
 
     public List<Experience> getExperienceByUserId(Long id) {
         return experienceRepository.findByUserId(id);

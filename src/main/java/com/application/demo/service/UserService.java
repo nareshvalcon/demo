@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.application.demo.entity.AppUser;
+import com.application.demo.exception.UnauthorizedException;
 import com.application.demo.repository.UserRepository;
 
 @Service
@@ -47,20 +48,13 @@ public class UserService {
         return user;
     }
 
-    public AppUser loginUser(String email, String password) {
+    public Optional<AppUser> loginUser(String email, String password) {
         Optional<AppUser> user = userRepository.findByEmail(email);
         
-        if (!user.isPresent()) {
-            // throw exception or return error
-            return null;
-        }
-    
-        if (!password.equals(user.get().getPassword())) {
-            // throw exception or return error
-            return null;
-        }
-    
-        return user.get();
+        if (!user.isPresent() || !password.equals(user.get().getPassword())) {
+            throw new UnauthorizedException("Invalid credentials");
+        } 
+        return user;
     }
 
     public AppUser confirmUser(String email, String confirmationCode) {
@@ -109,5 +103,20 @@ public class UserService {
     public Optional<AppUser> getUserById(Long id) {
         return userRepository.findById(id);
     }
+
+    public AppUser updateUser(Long id, AppUser userUpdates) {
+        Optional<AppUser> user = userRepository.findById(id);
+        if(user.isPresent()){
+            AppUser userOld = user.get();
+            userOld.setFirstName(userUpdates.getFirstName() != null ? userUpdates.getFirstName() : userOld.getFirstName());
+            userOld.setMiddleName(userUpdates.getMiddleName() != null ? userUpdates.getMiddleName() : userOld.getMiddleName());
+            userOld.setLastName(userUpdates.getLastName() != null ? userUpdates.getLastName() : userOld.getLastName());
+            userOld.setPassword(userUpdates.getPassword() != null ? userUpdates.getPassword() : userOld.getPassword());
+            return userRepository.save(userOld);
+        }
+        return null;
+                    
+    }
+    
 }
 

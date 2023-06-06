@@ -79,4 +79,19 @@ public class EducationService {
         // Generate a unique blob name using the email and original filename
         return id + "/" + UUID.randomUUID() + "_" + originalFilename;
     }
+
+    public Education updateEducation(Long id, Education educationUpdates) {
+        Optional<Education> education = educationRepository.findById(id);
+        if(education.isPresent()){
+            Education educationOld = education.get();
+            educationOld.setCourse(educationUpdates.getCourse() != null ? educationUpdates.getCourse() : educationOld.getCourse());
+            educationOld.setDegree(educationUpdates.getDegree() != null ? educationUpdates.getDegree() : educationOld.getDegree());
+            educationOld.setUniversityName(educationUpdates.getUniversityName() != null ? educationUpdates.getUniversityName() : educationOld.getUniversityName());
+            educationOld.setStartYear(educationUpdates.getStartYear() != 0 ? educationUpdates.getStartYear() : educationOld.getStartYear());
+            educationOld.setEndYear(educationUpdates.getEndYear() != 0 ? educationUpdates.getEndYear() : educationOld.getEndYear());
+            return educationRepository.save(educationOld);
+        }
+        return null;
+                    
+    }
 }
