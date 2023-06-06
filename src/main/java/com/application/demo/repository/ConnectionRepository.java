@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface ConnectionRepository extends JpaRepository<Connection, Long> {
-    List<Connection> findByUser1OrUser2(AppUser user1, AppUser user2);
+    Optional<List<Connection>> findByUser1OrUser2(AppUser user1, AppUser user2);
+    Optional<Connection> findByUser1AndUser2(AppUser user1, AppUser user2);
     Optional<Connection> findById(Long id);
 }
 

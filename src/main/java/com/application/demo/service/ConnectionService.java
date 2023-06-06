@@ -40,7 +40,11 @@ public class ConnectionService {
         if(!user.isPresent()) {
             return null;
         }
-        return connectionRepository.findByUser1OrUser2(user.get(), user.get());
+        Optional<List<Connection>> connections = connectionRepository.findByUser1OrUser2(user.get(), user.get());
+        if(connections.isPresent()){
+            return connections.get();
+        }
+        return null;
     }
 
     public Connection acceptConnectionRequest(Long connectionId) {
