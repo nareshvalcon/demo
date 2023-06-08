@@ -29,7 +29,6 @@ public class AppUser implements Serializable{
 
     @NotEmpty(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
-    @JsonIgnore
     private String password;
 
     @NotEmpty(message = "Email is required")
