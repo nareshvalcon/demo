@@ -1,46 +1,59 @@
 package com.application.demo.service;
 
-import com.sendgrid.*;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
-
-import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import com.application.demo.entity.Email;
+
+import java.io.File;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+// ... other imports ...
 
 @Service
 public class EmailService {
 
-    // @Value("${spring.sendgrid.api-key}")
-    private String sendGridAPIKey;
-
-    // @Value("${mail.from}")
+    @Value("${spring.mail.username}")
     private String fromEmail;
 
-    public void sendEmail(String to, String subject, String body) {
-        Email from = new Email(fromEmail);
-        Email toEmail = new Email(to);
-        Content content = new Content("text/plain", body);
-        Mail mail = new Mail(from, subject, toEmail, content);
+    private final JavaMailSender emailSender;
 
-        SendGrid sendGrid = new SendGrid(sendGridAPIKey);
-        Request request = new Request();
+    @Autowired
+    public EmailService(JavaMailSender emailSender) {
+        this.emailSender = emailSender;
+    }
 
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
+    public void sendEmail(Email email) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            Response response = sendGrid.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
+        helper.setFrom(fromEmail);
+        helper.setTo(email.getToEmail());
+        helper.setSubject(email.getSubject());
+        helper.setText(email.getBody(), true);
 
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+        emailSender.send(message);
+    }
+
+    public void sendEmail(Email email, File attachment) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setFrom(fromEmail);
+        helper.setTo(email.getToEmail());
+        helper.setSubject(email.getSubject());
+        helper.setText(email.getBody(), true);
+
+        // Attachment
+        FileSystemResource file = new FileSystemResource(attachment);
+        helper.addAttachment(file.getFilename(), file);
+
+        emailSender.send(message);
     }
 }
-

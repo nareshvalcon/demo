@@ -14,8 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.application.demo.entity.AppUser;
 import com.application.demo.entity.Education;
+import com.application.demo.entity.Email;
 import com.application.demo.entity.Experience;
 import com.application.demo.service.EducationService;
+import com.application.demo.service.EmailService;
 import com.application.demo.service.ExperienceService;
 import com.application.demo.service.UserService;
 
@@ -31,6 +33,8 @@ public class UserController {
     @Autowired
     private ExperienceService experienceService;
 
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/register")
     public ResponseEntity<AppUser> registerUser(@Valid @RequestBody AppUser user) {
@@ -50,6 +54,27 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
     }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        Optional<AppUser> user = userService.getUserByEmail(email);
+        if(user.isPresent()) {
+            Email mail = new Email();
+            mail.setToEmail(user.get().getEmail());
+            mail.setSubject("Forgot Password");
+            mail.setBody("Click this link to reset your password: ...");
+            try {
+                emailService.sendEmail(mail);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return new ResponseEntity<>("Email could not be sent", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity<>("Reset password link sent to your email", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User does not exist", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping("/confirm")
     public ResponseEntity<AppUser> confirmUser(@RequestParam("email") String email, @RequestParam("code") String confirmationCode) {
