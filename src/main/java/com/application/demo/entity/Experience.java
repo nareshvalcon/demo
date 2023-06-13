@@ -1,5 +1,7 @@
 package com.application.demo.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -7,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Experience {
+public class Experience implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,6 +32,14 @@ public class Experience {
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", insertable = false, updatable = false)
     private AppUser appUser;
+
+    public Long getId(){
+        return this.id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
 
     // getters and setters
     public void setCompanyName(String companyName){

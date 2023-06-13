@@ -1,13 +1,15 @@
 package com.application.demo.entity;
 
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 import com.application.demo.enumeration.ConnectionStatus;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user1_id", "user2_id"}))
-public class Connection {
+public class Connection implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +24,14 @@ public class Connection {
 
     @Enumerated(EnumType.STRING)
     private ConnectionStatus status;
+
+    public Long getId(){
+        return this.id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
 
     public void setUser1(AppUser user1){
         this.user1 = user1;

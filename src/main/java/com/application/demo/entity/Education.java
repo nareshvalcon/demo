@@ -49,6 +49,14 @@ public class Education implements Serializable{
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private AppUser appUser;
 
+    public Long getId(){
+        return this.id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
+
     //getters and setters
     public void setUniversityName(String universityName){
         this.universityName = universityName;
