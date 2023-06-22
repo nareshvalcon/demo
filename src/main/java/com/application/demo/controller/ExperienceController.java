@@ -52,7 +52,7 @@ public class ExperienceController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadUserImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> uploadImage(@RequestParam("id") Long id, @RequestParam("image") MultipartFile image) {
         String imageUrl = experienceService.uploadImage(id, image);
         return ResponseEntity.ok("Image uploaded successfully: " + imageUrl);
     }

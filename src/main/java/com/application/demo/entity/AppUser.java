@@ -44,11 +44,9 @@ public class AppUser implements Serializable{
     private String imageUrl;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Education> educationList;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Experience> experienceList;
 
     // @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL)

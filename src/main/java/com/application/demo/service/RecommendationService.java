@@ -48,7 +48,9 @@ public class RecommendationService {
                     if (edu.getUniversityName().equals(currEdu.getUniversityName()) ||
                         edu.getCourse().equals(currEdu.getCourse()) ||
                         isOverlap(edu.getStartYear(), edu.getEndYear(), currEdu.getStartYear(), currEdu.getEndYear())) {
-                        recommendedUsers.add(user);
+                        if(!recommendedUsers.contains(user)){
+                            recommendedUsers.add(user);
+                        }
                         break;
                     }
                 }
@@ -59,7 +61,9 @@ public class RecommendationService {
                 for (Experience currExp : currentUserExperience) {
                     if (exp.getCompanyName().equals(currExp.getCompanyName()) ||
                         isOverlap(exp.getStartYear(), exp.getEndYear(), currExp.getStartYear(), currExp.getEndYear())) {
-                        recommendedUsers.add(user);
+                        if(!recommendedUsers.contains(user)){
+                            recommendedUsers.add(user);
+                        }
                         break;
                     }
                 }
@@ -71,7 +75,7 @@ public class RecommendationService {
                 recommendedUsers.add(defaultUser);
             }
         }
-        return recommendedUsers.size() <= 2 ? recommendedUsers  : recommendedUsers.subList(0, 3);
+        return recommendedUsers.size() <= 2 ? recommendedUsers  : recommendedUsers.subList(0, 2);
     }
     
     private boolean isOverlap(int startYear1, int endYear1, int startYear2, int endYear2) {
