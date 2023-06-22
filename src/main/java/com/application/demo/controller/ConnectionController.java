@@ -72,7 +72,7 @@ public class ConnectionController {
     public ResponseEntity<?> getRecommendations(@RequestParam("userid") Long userId) {
         Optional<AppUser> currentUser = userService.getUserById(userId);
         if(currentUser.isPresent()){
-            List<AppUser> recommendations = recommendationService.recommendConnections(currentUser.get());
+            List<AppUser> recommendations = connectionService.recommendConnections(currentUser.get());
             return ResponseEntity.ok(recommendations);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with id " + userId + " not found.");

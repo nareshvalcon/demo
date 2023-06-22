@@ -1,7 +1,10 @@
 package com.application.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,9 @@ public class ConnectionService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RecommendationService recommendationService;
     
     public Connection sendConnectionRequest(String user1Email, String user2Email) {
         Optional<AppUser> user1 = userRepository.findByEmail(user1Email);
@@ -74,5 +80,16 @@ public class ConnectionService {
     
         return connection.get();
     }
-    
+
+    public List<AppUser> recommendConnections(AppUser currentUser) {
+        List<AppUser> recommendations = recommendationService.recommendConnections(currentUser);
+        addConnections(currentUser, recommendations);
+        return recommendations;
+    }
+
+    private void addConnections(AppUser currentUser, List<AppUser> recommendations){
+        for (AppUser appUser : recommendations) {
+            sendConnectionRequest(currentUser.getEmail(), appUser.getEmail());
+        }
+    }   
 }
