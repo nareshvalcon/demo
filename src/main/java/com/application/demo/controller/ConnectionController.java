@@ -50,8 +50,8 @@ public class ConnectionController {
 
     // Endpoint to accept a connection request
     @PostMapping("/accept")
-    public ResponseEntity<?> acceptConnectionRequest(@RequestParam("connectionId") Long connectionId) {
-        Connection connection = connectionService.acceptConnectionRequest(connectionId);
+    public ResponseEntity<?> acceptConnectionRequest(@RequestParam("sender_email") String senderEmail, @RequestParam("recepient_email") String recepientEmail) {
+        Connection connection = connectionService.acceptConnectionRequest(senderEmail, recepientEmail);
         if (connection == null) {
             return new ResponseEntity<>("Failed to accept connection request", HttpStatus.BAD_REQUEST);
         }
@@ -60,8 +60,8 @@ public class ConnectionController {
 
     // Endpoint to reject a connection request
     @PostMapping("/reject")
-    public ResponseEntity<?> rejectConnectionRequest(@RequestParam("connectionId") Long connectionId) {
-        Connection connection = connectionService.rejectConnectionRequest(connectionId);
+    public ResponseEntity<?> rejectConnectionRequest(@RequestParam("sender_email") String senderEmail, @RequestParam("recepient_email") String recepientEmail) {
+        Connection connection = connectionService.rejectConnectionRequest(senderEmail, recepientEmail);
         if (connection == null) {
             return new ResponseEntity<>("Failed to reject connection request", HttpStatus.BAD_REQUEST);
         }

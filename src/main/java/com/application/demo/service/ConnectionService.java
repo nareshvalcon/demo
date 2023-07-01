@@ -53,32 +53,42 @@ public class ConnectionService {
         return null;
     }
 
-    public Connection acceptConnectionRequest(Long connectionId) {
-        Optional<Connection> connection = connectionRepository.findById(connectionId);
-    
-        // if the connection doesn't exist or its status isn't REQUESTED, return null
-        if (!connection.isPresent() || connection.get().getConnectionStatus() != ConnectionStatus.PENDING) {
-            return null;
+    public Connection acceptConnectionRequest(String senderEmail, String recepientEmail) {
+        Optional<AppUser> user1 = userRepository.findByEmail(senderEmail);
+        Optional<AppUser> user2 = userRepository.findByEmail(recepientEmail);
+        if(user1.isPresent() && user2.isPresent()){
+            Optional<Connection> connection = connectionRepository.findByUser1AndUser2(user1.get(), user2.get());
+        
+            // if the connection doesn't exist or its status isn't REQUESTED, return null
+            if (!connection.isPresent() || connection.get().getConnectionStatus() != ConnectionStatus.PENDING) {
+                return null;
+            }
+        
+            connection.get().setConnectionStatus(ConnectionStatus.CONFIRMED);
+            connectionRepository.save(connection.get());
+        
+            return connection.get();
         }
-    
-        connection.get().setConnectionStatus(ConnectionStatus.CONFIRMED);
-        connectionRepository.save(connection.get());
-    
-        return connection.get();
+        return null;
     }
     
-    public Connection rejectConnectionRequest(Long connectionId) {
-        Optional<Connection> connection = connectionRepository.findById(connectionId);
-    
-        // if the connection doesn't exist or its status isn't REQUESTED, return null
-        if (!connection.isPresent() || connection.get().getConnectionStatus() != ConnectionStatus.PENDING) {
-            return null;
+    public Connection rejectConnectionRequest(String senderEmail, String recepientEmail) {
+        Optional<AppUser> user1 = userRepository.findByEmail(senderEmail);
+        Optional<AppUser> user2 = userRepository.findByEmail(recepientEmail);
+        if(user1.isPresent() && user2.isPresent()){
+            Optional<Connection> connection = connectionRepository.findByUser1AndUser2(user1.get(), user2.get());
+        
+            // if the connection doesn't exist or its status isn't REQUESTED, return null
+            if (!connection.isPresent() || connection.get().getConnectionStatus() != ConnectionStatus.PENDING) {
+                return null;
+            }
+        
+            connection.get().setConnectionStatus(ConnectionStatus.REJECTED);
+            connectionRepository.save(connection.get());
+        
+            return connection.get();
         }
-    
-        connection.get().setConnectionStatus(ConnectionStatus.REJECTED);
-        connectionRepository.save(connection.get());
-    
-        return connection.get();
+        return null;
     }
 
     public List<AppUser> recommendConnections(AppUser currentUser) {
