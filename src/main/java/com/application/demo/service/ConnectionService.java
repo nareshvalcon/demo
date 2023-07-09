@@ -1,11 +1,10 @@
 package com.application.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.application.demo.entity.AppUser;
@@ -13,6 +12,7 @@ import com.application.demo.entity.Connection;
 import com.application.demo.repository.ConnectionRepository;
 import com.application.demo.repository.UserRepository;
 import com.application.demo.enumeration.ConnectionStatus;
+import com.application.demo.enumeration.UserConnectionStatus;
 
 @Service
 public class ConnectionService {
@@ -38,6 +38,8 @@ public class ConnectionService {
         connection.setUser1(user1.get());
         connection.setUser2(user2.get());
         connection.setConnectionStatus(ConnectionStatus.PENDING);
+        connection.setStatusUser1(UserConnectionStatus.PENDING);
+        connection.setStatusUser2(UserConnectionStatus.PENDING);
         return connectionRepository.save(connection);
     }
     
@@ -63,10 +65,26 @@ public class ConnectionService {
             if (!connection.isPresent() || connection.get().getConnectionStatus() != ConnectionStatus.PENDING) {
                 return null;
             }
-        
-            connection.get().setConnectionStatus(ConnectionStatus.CONFIRMED);
+            
+            if(Objects.equals(connection.get().getUser1().getId(), user1.get().getId())){
+                connection.get().setStatusUser1(UserConnectionStatus.LIKED);
+                if(connection.get().getStatusUser2() == UserConnectionStatus.LIKED){
+                    connection.get().setConnectionStatus(ConnectionStatus.CONFIRMED);
+                }
+                else{
+                    connection.get().setConnectionStatus(ConnectionStatus.PENDING);
+                }
+            }
+            else if(Objects.equals(connection.get().getUser2().getId(), user1.get().getId())){
+                connection.get().setStatusUser2(UserConnectionStatus.LIKED);
+                if(connection.get().getStatusUser1() == UserConnectionStatus.LIKED){
+                    connection.get().setConnectionStatus(ConnectionStatus.CONFIRMED);
+                }
+                else{
+                    connection.get().setConnectionStatus(ConnectionStatus.PENDING);
+                }
+            }
             connectionRepository.save(connection.get());
-        
             return connection.get();
         }
         return null;
@@ -83,7 +101,24 @@ public class ConnectionService {
                 return null;
             }
         
-            connection.get().setConnectionStatus(ConnectionStatus.REJECTED);
+            if(Objects.equals(connection.get().getUser1().getId(), user1.get().getId())){
+                connection.get().setStatusUser1(UserConnectionStatus.DISLIKED);
+                if(connection.get().getStatusUser2() == UserConnectionStatus.LIKED){
+                    connection.get().setConnectionStatus(ConnectionStatus.REJECTED);
+                }
+                else{
+                    connection.get().setConnectionStatus(ConnectionStatus.PENDING);
+                }
+            }
+            else if(Objects.equals(connection.get().getUser2().getId(), user1.get().getId())){
+                connection.get().setStatusUser2(UserConnectionStatus.DISLIKED);
+                if(connection.get().getStatusUser1() == UserConnectionStatus.LIKED){
+                    connection.get().setConnectionStatus(ConnectionStatus.REJECTED);
+                }
+                else{
+                    connection.get().setConnectionStatus(ConnectionStatus.PENDING);
+                }
+            }
             connectionRepository.save(connection.get());
         
             return connection.get();

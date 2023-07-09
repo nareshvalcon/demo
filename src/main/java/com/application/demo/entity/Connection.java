@@ -6,6 +6,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.application.demo.enumeration.ConnectionStatus;
+import com.application.demo.enumeration.UserConnectionStatus;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user1_id", "user2_id"}))
@@ -21,6 +22,14 @@ public class Connection implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user2_id")
     private AppUser user2;
+
+    @Column(name = "status_user1")
+    @Enumerated(EnumType.STRING)
+    private UserConnectionStatus statusUser1;
+
+    @Column(name = "status_user2")
+    @Enumerated(EnumType.STRING)
+    private UserConnectionStatus statusUser2;
 
     @Enumerated(EnumType.STRING)
     private ConnectionStatus status;
@@ -55,5 +64,21 @@ public class Connection implements Serializable {
 
     public ConnectionStatus getConnectionStatus(){
         return this.status;
+    }
+
+    public void setStatusUser1(UserConnectionStatus statusUser1){
+        this.statusUser1 = statusUser1;
+    }
+
+    public UserConnectionStatus getStatusUser1(){
+        return this.statusUser1;
+    }
+
+    public void setStatusUser2(UserConnectionStatus statusUser2){
+        this.statusUser2 = statusUser2;
+    }
+
+    public UserConnectionStatus getStatusUser2(){
+        return this.statusUser2;
     }
 }

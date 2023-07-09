@@ -45,25 +45,40 @@ public class RecommendationService {
             // Check for common education attributes
             for (Education edu : user.getEducationList()) {
                 for (Education currEdu : currentUserEducation) {
-                    if (edu.getUniversityName().equals(currEdu.getUniversityName()) ||
-                        edu.getCourse().equals(currEdu.getCourse()) ||
-                        isOverlap(edu.getStartYear(), edu.getEndYear(), currEdu.getStartYear(), currEdu.getEndYear())) {
-                        if(!recommendedUsers.contains(user)){
-                            recommendedUsers.add(user);
-                        }
+                    // Check if same university and same course
+                    if (edu.getUniversityName().equals(currEdu.getUniversityName()) || edu.getCourse().equals(currEdu.getCourse())) {
+                        recommendedUsers.add(user);
                         break;
                     }
                 }
             }
-    
+
             // Check for common experience attributes
             for (Experience exp : user.getExperienceList()) {
                 for (Experience currExp : currentUserExperience) {
-                    if (exp.getCompanyName().equals(currExp.getCompanyName()) ||
-                        isOverlap(exp.getStartYear(), exp.getEndYear(), currExp.getStartYear(), currExp.getEndYear())) {
-                        if(!recommendedUsers.contains(user)){
-                            recommendedUsers.add(user);
-                        }
+                    // Check if same company and same role
+                    if (exp.getCompanyName().equals(currExp.getCompanyName()) || exp.getRole().equals(currExp.getRole())) {
+                        recommendedUsers.add(user);
+                        break;
+                    }
+                }
+            }
+
+            // Check for overlap in start and end years of education
+            for (Education edu : user.getEducationList()) {
+                for (Education currEdu : currentUserEducation) {
+                    if (isOverlap(edu.getStartYear(), edu.getEndYear(), currEdu.getStartYear(), currEdu.getEndYear())) {
+                        recommendedUsers.add(user);
+                        break;
+                    }
+                }
+            }
+
+            // Check for overlap in start and end years of experience
+            for (Experience exp : user.getExperienceList()) {
+                for (Experience currExp : currentUserExperience) {
+                    if (isOverlap(exp.getStartYear(), exp.getEndYear(), currExp.getStartYear(), currExp.getEndYear())) {
+                        recommendedUsers.add(user);
                         break;
                     }
                 }
@@ -86,8 +101,7 @@ public class RecommendationService {
     }
 
     public boolean connectionExists(AppUser user1, AppUser user2) {
-        Optional<Connection> connection1 = connectionRepository.findByUser1AndUser2(user1, user2);
-        Optional<Connection> connection2 = connectionRepository.findByUser1AndUser2(user2, user1);
-        return connection1.isPresent() || connection2.isPresent();
+        Optional<Connection> connection = connectionRepository.findByUser1AndUser2(user1, user2);
+        return connection.isPresent();
     }    
 }
