@@ -90,7 +90,7 @@ public class RecommendationService {
                 recommendedUsers.add(defaultUser);
             }
         }
-        return recommendedUsers.size() <= 2 ? recommendedUsers  : recommendedUsers.subList(0, 2);
+        return recommendedUsers.size() <= 5 ? recommendedUsers  : recommendedUsers.subList(0, 5);
     }
     
     private boolean isOverlap(int startYear1, int endYear1, int startYear2, int endYear2) {
